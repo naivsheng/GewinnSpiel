@@ -25,10 +25,25 @@ import time
 
 def rotate(img):
     '''
-        旋转矫正：预处理后没有识别结果，将图片旋转180再次识别
+        通过获取图片的exif信息，进行正向旋转
+        TODO 旋转矫正：预处理后没有识别结果，将图片旋转180再次识别
     '''
-    img90 = np.rot180(img)
-
+    # img90 = np.rot180(img)
+    # img = Image.open(f)
+    if hasattr(img,'_getexif'):
+        # 获取exif信息
+        dict_exif = img._getexit()
+        print(dict_exif(274,0))
+        if dict_exif(274,0) == 3:
+            new_img = img.rotate(-90)
+        elif dict_exif(274,0) == 6:
+            new_img = img.rotate(180)
+        else:
+            new_img = img
+    else:
+        new_img = img
+    cv2.imshow('new',img)
+    cv2.waitKey(0)
 
 def plot(grayHist):
     '''
@@ -121,13 +136,15 @@ def bright(f):
 
 if __name__ == "__main__":
     t = time.time()
-    filepath = os.getcwd()
+    filepath = os.getcwd() + '\\pic\\'
     os.chdir(filepath)
     filelist = os.listdir(filepath)
     pattern_filiale_nr = re.compile(r'\s\d{9}\s')
     pattern_webshop_nr = re.compile(r'\s9\d{6}\s') # 网店单号更新为以1开头的8位
     for f in filelist:
-        if 'test' in f:
+        if ('.jpg' in f) or ('.bmp' in f) or ('.png' in f):
+            print('actuelle file:',f)
+            # input('check')
             # stat = bright(f)
             # print(f,stat)
             # continue
@@ -135,6 +152,9 @@ if __name__ == "__main__":
             img = hough(img) 
             # img = contrast(img)
             result = ocr(img)
+            check_file = filepath + f.split('.')[0] + '.txt'
+            with open(check_file, "a", encoding="utf-8") as f2:
+                f2.write(result) # 写入
             for counter in range(7):
                 result = re.sub('\d\s\d{9}','',result)
                 findout = pattern_filiale_nr.findall(result)

@@ -1,14 +1,7 @@
 '''
 # -*- coding: UTF-8 -*-
 # __Author__: Yingyu Wang
-# __date__: 
-# __Version__: 
-'''
-
-'''
-# -*- coding: UTF-8 -*-
-# __Author__: Yingyu Wang
-# __date__: 
+# __date__: 10.11.2021
 # __Version__: 直线检测
 '''
 #coding=utf-8
@@ -33,9 +26,12 @@ def hough(img):
             if pt1[0] == pt2[0] or pt1[1] == pt2[1]: # 旋转90度
                 img = rotate_bound(image,theta_avg + 90)
             elif (pt1[0]-pt2[0])/(pt1[1]-pt2[1]) > 0:
-                img = rotate_bound(image,90+theta_avg)
+                # img = rotate_bound(image,90+theta_avg)
+                img = rotate_bound(image,theta_avg)
             else:
-                img = rotate_bound(image,90-theta_avg)
+                # img = rotate_bound(image,90-theta_avg)
+                img = rotate_bound(image,-theta_avg)
+            cv2.line(img, pt1, pt2, (255))
         else: #水平直线
             # 该直线与第一列的交点
             pt1 = (0,int(rho_avg/np.sin(theta_avg)))
@@ -47,43 +43,10 @@ def hough(img):
                 img = rotate_bound(image,theta_avg)
             else:
                 img = rotate_bound(image,-theta_avg)
-    '''
-        for line in lines[0]: # 第一条线
-            rho = line[0] #第一个元素是距离rho
-            theta= line[1] #第二个元素是角度theta
-            if  (theta < (np.pi/4. )) or (theta > (3.*np.pi/4.0)): #垂直直线
-                #该直线与第一行的交点
-                pt1 = (int(rho/np.cos(theta)),0)
-                #该直线与最后一行的焦点
-                pt2 = (int((rho-result.shape[0]*np.sin(theta))/np.cos(theta)),result.shape[0])
-                # 旋转方向判断
-                if pt1[0] == pt2[0] or pt1[1] == pt2[1]: # 旋转90度
-                    img = rotate_bound(edges,theta + 90)
-                elif (pt1[0]-pt2[0])/(pt1[1]-pt2[1]) > 0:
-                    img = rotate_bound(edges,90+theta)
-                else:
-                    img = rotate_bound(edges,90-theta)
-            else: #水平直线
-                # 该直线与第一列的交点
-                pt1 = (0,int(rho/np.sin(theta)))
-                #该直线与最后一列的交点
-                pt2 = (result.shape[1], int((rho-result.shape[1]*np.cos(theta))/np.sin(theta)))
-                if pt1[0] == pt2[0] or pt1[1] == pt2[1]: # 无需旋转
-                    img = rotate_bound(edges,theta)
-                elif (pt1[0]-pt2[0])/(pt1[1]-pt2[1]) > 0:
-                    img = rotate_bound(edges,theta)
-                else:
-                    img = rotate_bound(edges,-theta)
-        
-        # cv2.imshow('Canny', edges )
-        # cv2.imshow('Result', result)
-        # img = rotate_bound(edges,theta) 
-        cv2.imshow('ww',img)
-        cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-    '''
-    # cv2.imshow('ww',img)
-    # cv2.waitKey(0)
+            cv2.line(img, pt1, pt2, (255), 1)
+    print(theta_avg)
+    cv2.imshow('ww',img)
+    cv2.waitKey(0)
     return img
     
 
