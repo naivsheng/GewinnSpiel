@@ -3,6 +3,9 @@
 # __Author__: Yingyu Wang
 # __date__: 29.10.2021
 # __Version__: 账单信息识别测试
+预处理中的取消旋转判定
+由于Beleg.Nr不唯一：获取datum信息以定位信息 TODO 确认datum信息
+对未能识别的图片顺时针旋转90°
 测试结果：不能读取gif格式
 TODO 
     直线检测hough变换，文本定位√
@@ -28,8 +31,6 @@ def rotate(img):
         通过获取图片的exif信息，进行正向旋转
         TODO 旋转矫正：预处理后没有识别结果，将图片旋转180再次识别
     '''
-    # img90 = np.rot180(img)
-    # img = Image.open(f)
     if hasattr(img,'_getexif'):
         # 获取exif信息
         dict_exif = img._getexit()
@@ -141,35 +142,43 @@ if __name__ == "__main__":
     filelist = os.listdir(filepath)
     pattern_filiale_nr = re.compile(r'\s\d{9}\s')
     pattern_webshop_nr = re.compile(r'\s9\d{6}\s') # 网店单号更新为以1开头的8位
+    pattern_datum = re.compile(r'\d{2}\s\d{2}\s\d{4}') # datum信息
     for f in filelist:
         if ('.jpg' in f) or ('.bmp' in f) or ('.png' in f):
             print('actuelle file:',f)
-            # input('check')
             # stat = bright(f)
             # print(f,stat)
             # continue
             img = cv2.imread(f)
-            img = hough(img) 
-            # img = contrast(img)
+            # img = hough(img) 
+            img = contrast(img)
             result = ocr(img)
             check_file = filepath + f.split('.')[0] + '.txt'
             with open(check_file, "a", encoding="utf-8") as f2:
                 f2.write(result) # 写入
-            for counter in range(7):
-                result = re.sub('\d\s\d{9}','',result)
-                findout = pattern_filiale_nr.findall(result)
-                if not findout:
-                    findout = pattern_webshop_nr.findall(result)
+            findout_beleg = pattern_filiale_nr.findall(result)
+            findout_datum = pattern_datum.findall(result)
+            for counter in range(5):
+                # result = re.sub('\d\s\d{9}','',result)
+                if not findout_datum:
+                    findout_datum = pattern_datum.findall(result)
+                if not findout_beleg:
+                    findout_beleg = pattern_webshop_nr.findall(result)
                 else:
-                    print(f,counter, "fl", findout)
-                    break
-                if findout:
-                    print(f,counter, "online", findout)
+                    if findout_datum:
+                        print(f,counter, "fl", findout_beleg)
+                        print('datum:',findout_datum)
+                        break
+                    else:
+                        continue
+                if findout_beleg:
+                    print(f,counter, "online", findout_beleg)
                     break
                 img = imgBrightness(img,1.1 + counter / 10,3)
                 result = ocr(img)
-            if not findout:
+            if not findout_beleg:
                 print(f,'does not find out a result')    
+            else: print(findout_beleg,findout_datum)
             # imgBrightness(f,1.5,3)
             continue
             # gray(f)
