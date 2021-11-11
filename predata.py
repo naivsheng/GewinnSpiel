@@ -5,7 +5,7 @@
 # __Version__: 读取得数据进行清洗、归档
 '''
 
-def DataCleaning(data_list):
+def DatumCleaning(data_list):
     '''
         确认0<月份<13，否则替换月份中的4->1；
         确认0<日期<32，否则替换日期中的4->1
@@ -13,6 +13,8 @@ def DataCleaning(data_list):
         去重
     '''
     result = []
+    if not data_list:
+        return data_list
     if len(data_list)>1:
         for data in data_list:
             pre = data.split('.')
@@ -34,3 +36,15 @@ def DataCleaning(data_list):
             pre[1] = pre[1].replace('4','1')
         result.append(pre[0]+'.'+pre[1]+'.'+pre[2])
     return result[0]
+
+def BelegCleaning(datalist):
+    '''
+        清洗beleg数据
+        删除多余字符
+        将错读的字符串首字更改为 '1'
+    '''
+    pre = datalist[0]
+    pre = re.sub(r'^[0-9]','',pre)
+    if pre[0] == '4':
+        pre[0] = '1'
+    return pre

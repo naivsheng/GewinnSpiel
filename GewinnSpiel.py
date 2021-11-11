@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 from hough import hough
 import re
 import time
-from predata import DataCleaning
+from predata import DatumCleaning
 
 def rotate(img):
     '''
@@ -123,7 +123,7 @@ def findresult(img):
     pattern_filiale_nr = re.compile(r'\D\s\d{9}\s')   # 单号9位数字 非数字+空+数字9位+空 规避fax
     pattern_webshop_nr = re.compile(r'\s9\d{6}\s') # 网店单号更新为以1开头的8位
     # pattern_datum = re.compile(r'\d{2}.\d{2}.2021') # datum信息 数字2.数字2.数字4 
-    pattern_datum = re.compile(r'\d{2}\.\d{2}\.d{4}')
+    pattern_datum = re.compile(r'\d{2}[.]\d{2}[.]\d{4}')
     findout_beleg = pattern_filiale_nr.findall(result)
     findout_datum = pattern_datum.findall(result)
     for counter in range(5):
@@ -133,16 +133,13 @@ def findresult(img):
             findout_beleg = pattern_webshop_nr.findall(result)
         else:
             if findout_datum:
-                # print(f,counter, "fl", findout_beleg)
-                # print('datum:',findout_datum)
                 break
-            else:
-                continue
-        if findout_beleg:
-            # print(f,counter, "online", findout_beleg)
-            break
+        #     else:
+        #         continue
+        # if findout_beleg:
+        #     break
         # img = imgBrightness(img,1.1 + counter / 10,3)
-        result = ocr(imgBrightness(img,1.1 + (counter / 10) * 1.5,3))
+        result = ocr(imgBrightness(img,1.1 + (counter / 10) * 2,3))
     
     return findout_beleg,findout_datum
 
@@ -161,16 +158,27 @@ if __name__ == "__main__":
             # with open(check_file, "a", encoding="utf-8") as f2:
             #     f2.write(result) # 写入
             findout_beleg, findout_datum = findresult(img)
-            print(findout_beleg,findout_datum)
-            if not findout_beleg and not findout_datum:
+            # print(findout_beleg,findout_datum)
+            '''if not findout_beleg and not findout_datum:
                 img = rotate(img)
                 print('rotate')
                 findout_beleg, findout_datum = findresult(img)
-            if not findout_beleg:
-                print(f,'does not find out a result')    
-            if findout_datum:
+            if findout_beleg:
                 findout_datum = DataCleaning(findout_datum)    
                 print(findout_beleg,findout_datum)
-            else: print(f,'does not find out a datum')
-
+            else:
+                print(f,'does not find out a result')'''    
+            if findout_beleg and findout_datum:
+                findout_datum = DataCleaning(findout_datum)
+                print(findout_beleg,findout_datum)
+            else:
+                img = rotate(img)
+                print('rotate')
+                findout_beleg, findout_datum = findresult(img)
+                if findout_beleg and findout_datum:
+                    findout_beleg = BelegCleaning(findout_beleg)
+                    findout_datum = DatumCleaning(findout_datum)
+                    print(findout_beleg,findout_datum)
+                else:
+                    print(f,'does not find out a result')
     print('用时：',time.time()-t)

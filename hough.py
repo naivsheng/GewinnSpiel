@@ -44,9 +44,9 @@ def hough(img):
             else:
                 img = rotate_bound(image,-theta_avg)
             cv2.line(img, pt1, pt2, (255), 1)
-    print(theta_avg)
-    cv2.imshow('ww',img)
-    cv2.waitKey(0)
+    # print(theta_avg)
+    # cv2.imshow('ww',img)
+    # cv2.waitKey(0)
     return img
     
 
