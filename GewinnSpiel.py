@@ -5,7 +5,7 @@
 # __Version__: 账单信息识别测试
 预处理中的取消旋转判定
 由于Beleg.Nr不唯一：获取datum信息以定位信息 TODO 确认datum信息
-对未能识别的图片顺时针旋转90°
+对未能识别的图片顺时针旋转90°/180°
 测试结果：不能读取gif格式
 TODO 
     直线检测hough变换，文本定位√
@@ -25,26 +25,14 @@ import matplotlib.pyplot as plt
 from hough import hough
 import re
 import time
+from predata import DataCleaning
 
 def rotate(img):
     '''
         通过获取图片的exif信息，进行正向旋转
         TODO 旋转矫正：预处理后没有识别结果，将图片旋转180再次识别
     '''
-    if hasattr(img,'_getexif'):
-        # 获取exif信息
-        dict_exif = img._getexit()
-        print(dict_exif(274,0))
-        if dict_exif(274,0) == 3:
-            new_img = img.rotate(-90)
-        elif dict_exif(274,0) == 6:
-            new_img = img.rotate(180)
-        else:
-            new_img = img
-    else:
-        new_img = img
-    cv2.imshow('new',img)
-    cv2.waitKey(0)
+    return np.rot90(img,k=2) # 逆时针旋转90，k表示旋转次数，-1表示顺时针
 
 def plot(grayHist):
     '''
@@ -114,14 +102,6 @@ def imgBrightness(img,c,b):
     '''
         提高亮度,提高识别准确率
     '''
-    '''img = cv2.imread(f)
-    rows, cols, channels = img.shape
-    blank = np.zeros([rows,cols,channels],img.dtype)
-    rst = cv2.addWeighted(img,c,blank,1-c,b) # 通过图像融合提高亮度
-    # output = f.split('.')
-    # out = output[0] + '_bright.' + output[1]
-    # cv2.imwrite(out,rst)
-    # ocr(out)'''
     rows,cols,channels = img.shape
     blank = np.zeros([rows,cols,channels],img.dtype)
     rst = cv2.addWeighted(img,c,blank,1-c,b)
@@ -135,54 +115,62 @@ def bright(f):
     stat = ImageStat.Stat(img)
     return stat.rms[0]
 
+def findresult(img):
+    '''
+        通过提高亮度增加清晰度
+    '''
+    result = ocr(img)
+    pattern_filiale_nr = re.compile(r'\D\s\d{9}\s')   # 单号9位数字 非数字+空+数字9位+空 规避fax
+    pattern_webshop_nr = re.compile(r'\s9\d{6}\s') # 网店单号更新为以1开头的8位
+    # pattern_datum = re.compile(r'\d{2}.\d{2}.2021') # datum信息 数字2.数字2.数字4 
+    pattern_datum = re.compile(r'\d{2}\.\d{2}\.d{4}')
+    findout_beleg = pattern_filiale_nr.findall(result)
+    findout_datum = pattern_datum.findall(result)
+    for counter in range(5):
+        if not findout_datum:
+            findout_datum = pattern_datum.findall(result)
+        if not findout_beleg:
+            findout_beleg = pattern_webshop_nr.findall(result)
+        else:
+            if findout_datum:
+                # print(f,counter, "fl", findout_beleg)
+                # print('datum:',findout_datum)
+                break
+            else:
+                continue
+        if findout_beleg:
+            # print(f,counter, "online", findout_beleg)
+            break
+        # img = imgBrightness(img,1.1 + counter / 10,3)
+        result = ocr(imgBrightness(img,1.1 + (counter / 10) * 1.5,3))
+    
+    return findout_beleg,findout_datum
+
 if __name__ == "__main__":
     t = time.time()
     filepath = os.getcwd() + '\\pic\\'
     os.chdir(filepath)
     filelist = os.listdir(filepath)
-    pattern_filiale_nr = re.compile(r'\s\d{9}\s')
-    pattern_webshop_nr = re.compile(r'\s9\d{6}\s') # 网店单号更新为以1开头的8位
-    pattern_datum = re.compile(r'\d{2}\s\d{2}\s\d{4}') # datum信息
     for f in filelist:
         if ('.jpg' in f) or ('.bmp' in f) or ('.png' in f):
             print('actuelle file:',f)
-            # stat = bright(f)
-            # print(f,stat)
-            # continue
             img = cv2.imread(f)
             # img = hough(img) 
             img = contrast(img)
-            result = ocr(img)
-            check_file = filepath + f.split('.')[0] + '.txt'
-            with open(check_file, "a", encoding="utf-8") as f2:
-                f2.write(result) # 写入
-            findout_beleg = pattern_filiale_nr.findall(result)
-            findout_datum = pattern_datum.findall(result)
-            for counter in range(5):
-                # result = re.sub('\d\s\d{9}','',result)
-                if not findout_datum:
-                    findout_datum = pattern_datum.findall(result)
-                if not findout_beleg:
-                    findout_beleg = pattern_webshop_nr.findall(result)
-                else:
-                    if findout_datum:
-                        print(f,counter, "fl", findout_beleg)
-                        print('datum:',findout_datum)
-                        break
-                    else:
-                        continue
-                if findout_beleg:
-                    print(f,counter, "online", findout_beleg)
-                    break
-                img = imgBrightness(img,1.1 + counter / 10,3)
-                result = ocr(img)
+            # check_file = filepath + f.split('.')[0] + '.txt'
+            # with open(check_file, "a", encoding="utf-8") as f2:
+            #     f2.write(result) # 写入
+            findout_beleg, findout_datum = findresult(img)
+            print(findout_beleg,findout_datum)
+            if not findout_beleg and not findout_datum:
+                img = rotate(img)
+                print('rotate')
+                findout_beleg, findout_datum = findresult(img)
             if not findout_beleg:
                 print(f,'does not find out a result')    
-            else: print(findout_beleg,findout_datum)
-            # imgBrightness(f,1.5,3)
-            continue
-            # gray(f)
-            # img = cv2.imread(f)
-            # img = contrast(img)
-            # mean_rgb(f)
+            if findout_datum:
+                findout_datum = DataCleaning(findout_datum)    
+                print(findout_beleg,findout_datum)
+            else: print(f,'does not find out a datum')
+
     print('用时：',time.time()-t)
