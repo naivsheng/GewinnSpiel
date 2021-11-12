@@ -13,31 +13,6 @@ def DatumCleaning(data_list):
         若有多个数据，直接删除不符合规范的数据
         去重
     '''
-    
-    '''print(data_list)
-    result = []
-    if not data_list:
-        return data_list
-    if len(data_list)>1:
-        for data in data_list:
-            pre = data.split('.')
-            if pre[2] != '2021':
-                continue
-            if int(pre[0]) > 31:
-                pre[0] = pre[0].replace('4','1')
-            if int(pre[1]) > 12:
-                pre[1] = pre[1].replace('4','1')
-            result.append(pre[0]+'.'+pre[1]+'.'+pre[2])
-        result = list(set(result))  # 去重
-    else:
-        pre = data_list[0].split('.')
-        if int(pre[2]) != 2021:
-            pre[2] = pre[2].replace('4','1')
-        if int(pre[0]) > 31:
-            pre[0] = pre[0].replace('4','1')
-        if int(pre[1]) > 12:
-            pre[1] = pre[1].replace('4','1')
-        result.append(pre[0]+'.'+pre[1]+'.'+pre[2])'''
     # print(data_list)
     result = ''
     for data in data_list:
@@ -59,17 +34,18 @@ def DatumCleaning(data_list):
         return result
     else:
         result == ''
-        # print(data_list)
-        pre = data_list[0].split('.')
-        # print(pre)
+        try:
+            pre = data_list.split('.')
+        except:
+            pre = data_list[0].split('.')
         y = pre[2].replace('4','1')
         if y != '2021': return ''
         m = pre[1]
         if int(m)>12: m = m.replace('4','1')
         if int(m)>12:return ''
         d = pre[0]
-        if int(m)>31: m = m.replace('4','1')
-        if int(m)>31:return ''
+        if int(d)>31: m = m.replace('4','1')
+        if int(d)>31:return ''
         result = d + '.' + m + '.' + y
     return result
 
@@ -106,11 +82,14 @@ def BelegCleaning(datalist):
             # pre = re.sub('^[0-9]','',beleg)
             pre = beleg[2:-1]
             if pre[0] in data:
-                result.append(data[beleg[0]] + beleg[1:])
-            elif beleg[0] not in data_rest:
+                result.append(data[pre[0]] + pre[1:])
+            elif pre[0] not in data_rest:
                 pass
-            else: result.append(beleg)
+            else: result.append(pre)
         else:
             # result.append(re.sub('[^0-9]','',beleg))
-            result.append(beleg[2:-1])
-    return result
+            result.append(beleg[1:-1])
+    if len(result) > 0: 
+        return result[0]
+    else: return ''
+    

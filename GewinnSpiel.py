@@ -38,14 +38,19 @@ def contrast(img):
     '''
         均衡化: 增强对比度，提高识别准确率，但提升有限
     '''
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-    plane = []
-    planes = cv2.split(img) # 将图片分为三个单通道
-    for i in range(len(planes)):
-        plane.append(clahe.apply(planes[i]))
-    cl1 = cv2.merge(plane)
+    ''' 彩色
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+        plane = []
+        planes = cv2.split(img) # 将图片分为三个单通道
+        for i in range(len(planes)):
+            plane.append(clahe.apply(planes[i]))
+        cl1 = cv2.merge(plane)
+        return cl1
+    '''
+    # 灰度图
+    clahe = cv2.createCLAHE(clipLimit=2.0,tileGridSize=(8,8))
+    cl1 = clahe.apply(img)
     return cl1
-    
 def ocr(image):
     '''
         识别
@@ -57,8 +62,10 @@ def imgBrightness(img,c,b):
     '''
         提高亮度,提高识别准确率
     '''
-    rows,cols,channels = img.shape
-    blank = np.zeros([rows,cols,channels],img.dtype)
+    # rows,cols,channels = img.shape
+    rows, cols = img.shape # 灰度图
+    # blank = np.zeros([rows,cols,channels],img.dtype)
+    blank = np.zeros([rows,cols],img.dtype)
     rst = cv2.addWeighted(img,c,blank,1-c,b)
     return rst
 
@@ -74,7 +81,6 @@ def findresult(img):
     '''
         通过提高亮度增加清晰度
     '''
-    
     result = ocr(img)
     # pattern_filiale_nr = re.compile(r'\D\s\d{9}\s')   # 单号9位数字 非数字+空+数字9位+空 规避fax
     # pattern_filiale_nr = re.compile(r'[\S\s][\s]\d{9}[\s]')    # 尝试获取所有数据，后续再进行清洗
@@ -96,7 +102,6 @@ def findresult(img):
     check_file = filepath + f.split('.')[0] + '.txt'
     with open(check_file, "a", encoding="utf-8") as f2:
         f2.write(result) # 写入
-    
     return findout_beleg,findout_datum
     
 
@@ -156,6 +161,9 @@ def main_neu(img):
             findout_beleg = BelegCleaning(findout_beleg)
         elif findout_datum:
             findout_datum = DatumCleaning(findout_datum)
+            findout_beleg = pattern_webshop_nr.findall(result)
+            if findout_beleg:
+                findout_beleg = BelegCleaning(findout_beleg)
         else:
             findout_beleg = BelegCleaning(findout_beleg)
         if findout_datum and findout_beleg:
@@ -172,7 +180,7 @@ if __name__ == "__main__":
         if ('.jpg' in f) or ('.bmp' in f) or ('.png' in f):
             print('actuelle file:',f)
             # main(f)
-            img = cv2.imread(f)
+            img = cv2.imread(f,0)
             img = contrast(img)
             findout_beleg,findout_datum = main_neu(img)
             if not findout_datum and not findout_beleg:
