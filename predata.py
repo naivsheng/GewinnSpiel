@@ -4,6 +4,7 @@
 # __date__: 11.11.2021
 # __Version__: 读取得数据进行清洗、归档
 '''
+import re
 
 def DatumCleaning(data_list):
     '''
@@ -43,8 +44,10 @@ def BelegCleaning(datalist):
         删除多余字符
         将错读的字符串首字更改为 '1'
     '''
+    data = {'4':'1','6':'5'}    # 没有由 6或4 为首字的单号
     pre = datalist[0]
-    pre = re.sub(r'^[0-9]','',pre)
-    if pre[0] == '4':
-        pre[0] = '1'
-    return pre
+    pre = re.sub('[^\d]','',pre)
+    if pre[0] in data:
+        result = data[pre[0]] + pre[1:]
+    else: result = pre
+    return result

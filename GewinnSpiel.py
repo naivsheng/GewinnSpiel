@@ -4,8 +4,9 @@
 # __date__: 29.10.2021
 # __Version__: 账单信息识别测试
 预处理中的取消旋转判定
-由于Beleg.Nr不唯一：获取datum信息以定位信息 TODO 确认datum信息
-对未能识别的图片顺时针旋转90°/180°
+由于Beleg.Nr不唯一：获取datum信息以定位信息
+对未能识别的图片顺时针旋转180°
+仍未能识别：hough+contrast+rotate
 测试结果：不能读取gif格式
 TODO 
     直线检测hough变换，文本定位√
@@ -25,12 +26,11 @@ import matplotlib.pyplot as plt
 from hough import hough
 import re
 import time
-from predata import DatumCleaning
+from predata import DatumCleaning, BelegCleaning
 
 def rotate(img):
     '''
-        通过获取图片的exif信息，进行正向旋转
-        TODO 旋转矫正：预处理后没有识别结果，将图片旋转180再次识别
+        旋转矫正：预处理后没有识别结果，将图片旋转180再次识别
     '''
     return np.rot90(img,k=2) # 逆时针旋转90，k表示旋转次数，-1表示顺时针
 
@@ -143,6 +143,57 @@ def findresult(img):
     
     return findout_beleg,findout_datum
 
+def main(f):
+    img = cv2.imread(f)
+    # img = hough(img) 
+    img = contrast(img)
+    # check_file = filepath + f.split('.')[0] + '.txt'
+    # with open(check_file, "a", encoding="utf-8") as f2:
+    #     f2.write(result) # 写入
+    findout_beleg, findout_datum = findresult(img)
+    # print(findout_beleg,findout_datum)
+    '''if not findout_beleg and not findout_datum:
+        img = rotate(img)
+        print('rotate')
+        findout_beleg, findout_datum = findresult(img)
+    if findout_beleg:
+        findout_datum = DataCleaning(findout_datum)    
+        print(findout_beleg,findout_datum)
+    else:
+        print(f,'does not find out a result')'''    
+    if findout_beleg and findout_datum:
+        findout_datum = DatumCleaning(findout_datum)
+        findout_beleg = BelegCleaning(findout_beleg)
+        print(findout_beleg,findout_datum)
+    else:
+        img = rotate(img)
+        print('rotate')
+        findout_beleg, findout_datum = findresult(img)
+        if findout_beleg and findout_datum:
+            findout_beleg = BelegCleaning(findout_beleg)
+            findout_datum = DatumCleaning(findout_datum)
+            print(findout_beleg,findout_datum)
+        else:
+            print('hough')
+            img = cv2.imread(f)
+            img = hough(img)
+            img = contrast(img)
+            if findout_beleg and findout_datum:
+                findout_datum = DatumCleaning(findout_datum)
+                findout_beleg = BelegCleaning(findout_beleg)
+                print(findout_beleg,findout_datum) 
+            else:
+                img = rotate(img)
+                print('hough rotate')
+                findout_beleg, findout_datum = findresult(img)
+                if findout_beleg and findout_datum:
+                    findout_beleg = BelegCleaning(findout_beleg)
+                    findout_datum = DatumCleaning(findout_datum)
+                    print(findout_beleg,findout_datum)
+                else:
+                    print(f,'does not find out a result')
+
+
 if __name__ == "__main__":
     t = time.time()
     filepath = os.getcwd() + '\\pic\\'
@@ -151,34 +202,5 @@ if __name__ == "__main__":
     for f in filelist:
         if ('.jpg' in f) or ('.bmp' in f) or ('.png' in f):
             print('actuelle file:',f)
-            img = cv2.imread(f)
-            # img = hough(img) 
-            img = contrast(img)
-            # check_file = filepath + f.split('.')[0] + '.txt'
-            # with open(check_file, "a", encoding="utf-8") as f2:
-            #     f2.write(result) # 写入
-            findout_beleg, findout_datum = findresult(img)
-            # print(findout_beleg,findout_datum)
-            '''if not findout_beleg and not findout_datum:
-                img = rotate(img)
-                print('rotate')
-                findout_beleg, findout_datum = findresult(img)
-            if findout_beleg:
-                findout_datum = DataCleaning(findout_datum)    
-                print(findout_beleg,findout_datum)
-            else:
-                print(f,'does not find out a result')'''    
-            if findout_beleg and findout_datum:
-                findout_datum = DataCleaning(findout_datum)
-                print(findout_beleg,findout_datum)
-            else:
-                img = rotate(img)
-                print('rotate')
-                findout_beleg, findout_datum = findresult(img)
-                if findout_beleg and findout_datum:
-                    findout_beleg = BelegCleaning(findout_beleg)
-                    findout_datum = DatumCleaning(findout_datum)
-                    print(findout_beleg,findout_datum)
-                else:
-                    print(f,'does not find out a result')
+            main(f)
     print('用时：',time.time()-t)
