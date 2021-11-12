@@ -15,7 +15,7 @@ TODO
     # 图像匹配 文字区域检测 序列切分识别
     文字提取ocr
 '''
-# import the necessary packages
+
 from PIL import Image, ImageStat
 import pytesseract
 import argparse
@@ -34,67 +34,22 @@ def rotate(img):
     '''
     return np.rot90(img,k=2) # 逆时针旋转90，k表示旋转次数，-1表示顺时针
 
-def plot(grayHist):
-    '''
-        计算灰度分布直方图
-    '''
-    plt.plot(range(256), grayHist, 'r', linewidth=1.5, c='red')
-    y_maxValue = np.max(grayHist)
-    plt.axis([0, 255, 0, y_maxValue]) # x和y的范围
-    plt.xlabel("gray Level")
-    plt.ylabel("Number Of Pixels")
-    plt.show()
-
-def gray(f):
-    '''
-        处理图片: 灰度
-    '''
-    img = cv2.imread(f)
-    img_gray = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
-    output = f.split('.')
-    outname = output[0] + '_gray.' + output[1]
-    cv2.imwrite(outname,img_gray)
-    '''
-        # 图像的灰度级范围是0~255
-        grayHist = cv2.calcHist([img_gray], [0], None, [256], [0, 256])
-        plot(grayHist)  # 直方图
-    '''
-    dst = 255-img_gray # 反相
-    ocr(dst)
-    cv2.imshow('dst', dst)
-    cv2.waitKey(0)
-    # contrast(outname)
-    # ocr(outname)
-    # os.remove(os.getcwd() + '\\' + outname) # remove the cache
-
 def contrast(img):
     '''
         均衡化: 增强对比度，提高识别准确率，但提升有限
     '''
-    # img = cv2.imread(f,0)   # -1 原图；0 灰度；1 RGB
-    # grayHist = cv2.calcHist([img], [0], None, [256], [0, 256])
-    # plot(grayHist)
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-    # cl1 = clahe.apply(img) # 灰度仅需要单相处理
     plane = []
     planes = cv2.split(img) # 将图片分为三个单通道
     for i in range(len(planes)):
         plane.append(clahe.apply(planes[i]))
     cl1 = cv2.merge(plane)
-    
-    # res = np.hstack((img,cl1)) # 图片合并
     return cl1
-    output = f.split('.')
-    out = output[0] + '_contrast.' + output[1]
-    cv2.imwrite(out,cl1)
-    
-    # ocr(out)
     
 def ocr(image):
     '''
         识别
     '''
-    # image = Image.open(f)
     string = pytesseract.image_to_string(image)
     return string
 
@@ -119,10 +74,12 @@ def findresult(img):
     '''
         通过提高亮度增加清晰度
     '''
+    
     result = ocr(img)
-    pattern_filiale_nr = re.compile(r'\D\s\d{9}\s')   # 单号9位数字 非数字+空+数字9位+空 规避fax
-    pattern_webshop_nr = re.compile(r'\s9\d{6}\s') # 网店单号更新为以1开头的8位
-    # pattern_datum = re.compile(r'\d{2}.\d{2}.2021') # datum信息 数字2.数字2.数字4 
+    # pattern_filiale_nr = re.compile(r'\D\s\d{9}\s')   # 单号9位数字 非数字+空+数字9位+空 规避fax
+    # pattern_filiale_nr = re.compile(r'[\S\s][\s]\d{9}[\s]')    # 尝试获取所有数据，后续再进行清洗
+    pattern_filiale_nr = re.compile(r'\D{2}\d{9}\D') 
+    pattern_webshop_nr = re.compile(r'\s1\d{7}\s') # 网店单号更新为以1开头的8位
     pattern_datum = re.compile(r'\d{2}[.]\d{2}[.]\d{4}')
     findout_beleg = pattern_filiale_nr.findall(result)
     findout_datum = pattern_datum.findall(result)
@@ -134,33 +91,19 @@ def findresult(img):
         else:
             if findout_datum:
                 break
-        #     else:
-        #         continue
-        # if findout_beleg:
-        #     break
-        # img = imgBrightness(img,1.1 + counter / 10,3)
         result = ocr(imgBrightness(img,1.1 + (counter / 10) * 2,3))
     
+    check_file = filepath + f.split('.')[0] + '.txt'
+    with open(check_file, "a", encoding="utf-8") as f2:
+        f2.write(result) # 写入
+    
     return findout_beleg,findout_datum
+    
 
 def main(f):
     img = cv2.imread(f)
-    # img = hough(img) 
     img = contrast(img)
-    # check_file = filepath + f.split('.')[0] + '.txt'
-    # with open(check_file, "a", encoding="utf-8") as f2:
-    #     f2.write(result) # 写入
     findout_beleg, findout_datum = findresult(img)
-    # print(findout_beleg,findout_datum)
-    '''if not findout_beleg and not findout_datum:
-        img = rotate(img)
-        print('rotate')
-        findout_beleg, findout_datum = findresult(img)
-    if findout_beleg:
-        findout_datum = DataCleaning(findout_datum)    
-        print(findout_beleg,findout_datum)
-    else:
-        print(f,'does not find out a result')'''    
     if findout_beleg and findout_datum:
         findout_datum = DatumCleaning(findout_datum)
         findout_beleg = BelegCleaning(findout_beleg)
@@ -173,6 +116,8 @@ def main(f):
             findout_beleg = BelegCleaning(findout_beleg)
             findout_datum = DatumCleaning(findout_datum)
             print(findout_beleg,findout_datum)
+        else: print(f,'does not find out a result')
+        '''
         else:
             print('hough')
             img = cv2.imread(f)
@@ -192,7 +137,31 @@ def main(f):
                     print(findout_beleg,findout_datum)
                 else:
                     print(f,'does not find out a result')
+        '''
 
+def main_neu(img):
+    result = ocr(img)
+    pattern_filiale_nr = re.compile(r'\D\W\d{9}\s') 
+    pattern_webshop_nr = re.compile(r'\s1\d{7}\s') # 网店单号更新为以1开头的8位
+    pattern_datum = re.compile(r'\d{2}[.]\d{2}[.]\d{4}')
+    findout_datum = []
+    findout_beleg = []
+    for counter in range(9):
+        findout_beleg = pattern_filiale_nr.findall(result) if not findout_beleg else findout_beleg
+        findout_datum = pattern_datum.findall(result) if not findout_datum else findout_datum
+        if not findout_datum and not findout_beleg:
+            pass
+        elif findout_datum and findout_beleg:
+            findout_datum = DatumCleaning(findout_datum)
+            findout_beleg = BelegCleaning(findout_beleg)
+        elif findout_datum:
+            findout_datum = DatumCleaning(findout_datum)
+        else:
+            findout_beleg = BelegCleaning(findout_beleg)
+        if findout_datum and findout_beleg:
+            break
+        result = ocr(imgBrightness(img,1.1 + (counter / 10), 3))    
+    return findout_beleg,findout_datum
 
 if __name__ == "__main__":
     t = time.time()
@@ -202,5 +171,16 @@ if __name__ == "__main__":
     for f in filelist:
         if ('.jpg' in f) or ('.bmp' in f) or ('.png' in f):
             print('actuelle file:',f)
-            main(f)
+            # main(f)
+            img = cv2.imread(f)
+            img = contrast(img)
+            findout_beleg,findout_datum = main_neu(img)
+            if not findout_datum and not findout_beleg:
+                print('rotate')
+                img = rotate(img)
+                findout_beleg,findout_datum = main_neu(img)
+            if not findout_datum and not findout_beleg:
+                print('does not find out a result')
+            else:
+                print(findout_beleg,findout_datum)    
     print('用时：',time.time()-t)
