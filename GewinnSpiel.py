@@ -1,14 +1,13 @@
 '''
 # -*- coding: UTF-8 -*-
 # __Author__: Yingyu Wang
-# __date__: 29.10.2021
+# __date__: 17.11.2021
 # __Version__: 账单信息识别测试
 预处理中的取消旋转判定
 由于Beleg.Nr不唯一：获取datum信息以定位信息
 对未能识别的图片顺时针旋转180°
-仍未能识别：hough+contrast+rotate
+# 仍未能识别：hough+contrast+rotate
 测试结果：不能读取gif格式
-TODO 
     直线检测hough变换，文本定位√
     旋转矫正rotate√
     提高亮度，提高对比度√
@@ -104,46 +103,6 @@ def findresult(img):
         f2.write(result) # 写入
     return findout_beleg,findout_datum
     
-
-def main(f):
-    img = cv2.imread(f)
-    img = contrast(img)
-    findout_beleg, findout_datum = findresult(img)
-    if findout_beleg and findout_datum:
-        findout_datum = DatumCleaning(findout_datum)
-        findout_beleg = BelegCleaning(findout_beleg)
-        print(findout_beleg,findout_datum)
-    else:
-        img = rotate(img)
-        print('rotate')
-        findout_beleg, findout_datum = findresult(img)
-        if findout_beleg and findout_datum:
-            findout_beleg = BelegCleaning(findout_beleg)
-            findout_datum = DatumCleaning(findout_datum)
-            print(findout_beleg,findout_datum)
-        else: print(f,'does not find out a result')
-        '''
-        else:
-            print('hough')
-            img = cv2.imread(f)
-            img = hough(img)
-            img = contrast(img)
-            if findout_beleg and findout_datum:
-                findout_datum = DatumCleaning(findout_datum)
-                findout_beleg = BelegCleaning(findout_beleg)
-                print(findout_beleg,findout_datum) 
-            else:
-                img = rotate(img)
-                print('hough rotate')
-                findout_beleg, findout_datum = findresult(img)
-                if findout_beleg and findout_datum:
-                    findout_beleg = BelegCleaning(findout_beleg)
-                    findout_datum = DatumCleaning(findout_datum)
-                    print(findout_beleg,findout_datum)
-                else:
-                    print(f,'does not find out a result')
-        '''
-
 def main_neu(img):
     result = ocr(img)
     pattern_filiale_nr = re.compile(r'\D\W\d{9}\s') 
@@ -151,7 +110,7 @@ def main_neu(img):
     pattern_datum = re.compile(r'\d{2}[.]\d{2}[.]\d{4}')
     findout_datum = []
     findout_beleg = []
-    for counter in range(9):
+    for counter in range(5):
         findout_beleg = pattern_filiale_nr.findall(result) if not findout_beleg else findout_beleg
         findout_datum = pattern_datum.findall(result) if not findout_datum else findout_datum
         if not findout_datum and not findout_beleg:
@@ -171,7 +130,7 @@ def main_neu(img):
         result = ocr(imgBrightness(img,1.1 + (counter / 10), 3))    
     return findout_beleg,findout_datum
 
-if __name__ == "__main__":
+def run():
     t = time.time()
     filepath = os.getcwd() + '\\pic\\'
     os.chdir(filepath)
@@ -179,7 +138,6 @@ if __name__ == "__main__":
     for f in filelist:
         if ('.jpg' in f) or ('.bmp' in f) or ('.png' in f):
             print('actuelle file:',f)
-            # main(f)
             img = cv2.imread(f,0)
             img = contrast(img)
             findout_beleg,findout_datum = main_neu(img)
@@ -192,3 +150,6 @@ if __name__ == "__main__":
             else:
                 print(findout_beleg,findout_datum)    
     print('用时：',time.time()-t)
+
+if __name__ == "__main__":
+    run()
