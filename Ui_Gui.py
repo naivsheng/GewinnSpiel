@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'h:\py\test\goasia\GewinnSpiel\Gui_act.ui'
+# Form implementation generated from reading ui file 'h:\py\test\goasia\GewinnSpiel\Gui.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -70,6 +70,7 @@ class Ui_MainWindow(object):
         self.lineEdit.setFont(font)
         self.lineEdit.setObjectName("lineEdit")
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_4.setEnabled(False)
         self.pushButton_4.setGeometry(QtCore.QRect(370, 170, 201, 51))
         font = QtGui.QFont()
         font.setFamily("Adobe Devanagari")
@@ -84,6 +85,10 @@ class Ui_MainWindow(object):
         self.dateTimeEdit.setObjectName("dateTimeEdit")
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(370, 240, 341, 192))
+        font = QtGui.QFont()
+        font.setFamily("Adobe Devanagari")
+        font.setPointSize(16)
+        self.textBrowser.setFont(font)
         self.textBrowser.setObjectName("textBrowser")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -108,7 +113,7 @@ class Ui_MainWindow(object):
         self.textBrowser.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">通过输入活动的有效月份信息，进行数据清洗，初步筛选无效数据。</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">可以通过选择时间进行自动开奖或手动抽奖</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:16pt;\"><br /></p></body></html>"))
+"</style></head><body style=\" font-family:\'Adobe Devanagari\'; font-size:16pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\';\">通过输入活动的有效月份信息，进行数据清洗，初步筛选无效数据。</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\';\">可以通过选择时间进行自动开奖或手动抽奖</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\';\"><br /></p></body></html>"))
