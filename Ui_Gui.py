@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'h:\py\test\goasia\GewinnSpiel\Gui.ui'
+# Form implementation generated from reading ui file 'h:\py\test\goasia\GewinnSpiel\Gui_act.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(80, 230, 191, 41))
+        self.pushButton.setGeometry(QtCore.QRect(80, 240, 191, 41))
         self.pushButton.setMinimumSize(QtCore.QSize(0, 41))
         font = QtGui.QFont()
         font.setFamily("Adobe Devanagari")
@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(590, 180, 121, 51))
+        self.pushButton_2.setGeometry(QtCore.QRect(590, 170, 121, 51))
         self.pushButton_2.setMinimumSize(QtCore.QSize(0, 31))
         font = QtGui.QFont()
         font.setFamily("Adobe Devanagari")
@@ -34,20 +34,13 @@ class Ui_MainWindow(object):
         self.pushButton_2.setFont(font)
         self.pushButton_2.setObjectName("pushButton_2")
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
-        self.progressBar.setGeometry(QtCore.QRect(80, 290, 251, 23))
+        self.progressBar.setGeometry(QtCore.QRect(80, 300, 251, 23))
         font = QtGui.QFont()
         font.setFamily("Adobe Devanagari")
         font.setPointSize(16)
         self.progressBar.setFont(font)
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
-        self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
-        self.textBrowser.setGeometry(QtCore.QRect(360, 270, 351, 192))
-        font = QtGui.QFont()
-        font.setFamily("Adobe Devanagari")
-        font.setPointSize(16)
-        self.textBrowser.setFont(font)
-        self.textBrowser.setObjectName("textBrowser")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(360, 80, 221, 51))
         font = QtGui.QFont()
@@ -63,46 +56,42 @@ class Ui_MainWindow(object):
         self.pushButton_3.setFont(font)
         self.pushButton_3.setObjectName("pushButton_3")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(80, 90, 171, 31))
+        self.label_2.setGeometry(QtCore.QRect(80, 90, 191, 71))
         font = QtGui.QFont()
         font.setFamily("Adobe Devanagari")
         font.setPointSize(16)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setGeometry(QtCore.QRect(80, 160, 161, 31))
+        self.lineEdit.setGeometry(QtCore.QRect(80, 170, 191, 31))
         font = QtGui.QFont()
         font.setFamily("Adobe Devanagari")
         font.setPointSize(16)
         self.lineEdit.setFont(font)
         self.lineEdit.setObjectName("lineEdit")
-        self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(130, 120, 131, 31))
-        font = QtGui.QFont()
-        font.setFamily("Adobe Devanagari")
-        font.setPointSize(16)
-        self.label_3.setFont(font)
-        self.label_3.setObjectName("label_3")
-        self.timeEdit = QtWidgets.QTimeEdit(self.centralwidget)
-        self.timeEdit.setGeometry(QtCore.QRect(370, 130, 201, 22))
-        font = QtGui.QFont()
-        font.setFamily("Adobe Devanagari")
-        font.setPointSize(16)
-        self.timeEdit.setFont(font)
-        self.timeEdit.setObjectName("timeEdit")
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(370, 180, 201, 51))
+        self.pushButton_4.setGeometry(QtCore.QRect(370, 170, 201, 51))
         font = QtGui.QFont()
         font.setFamily("Adobe Devanagari")
         font.setPointSize(16)
         self.pushButton_4.setFont(font)
         self.pushButton_4.setObjectName("pushButton_4")
+        self.dateTimeEdit = QtWidgets.QDateTimeEdit(self.centralwidget)
+        self.dateTimeEdit.setGeometry(QtCore.QRect(370, 130, 194, 22))
+        self.dateTimeEdit.setMaximumDate(QtCore.QDate(2199, 12, 31))
+        self.dateTimeEdit.setMinimumDate(QtCore.QDate(2020, 1, 1))
+        self.dateTimeEdit.setCalendarPopup(True)
+        self.dateTimeEdit.setObjectName("dateTimeEdit")
+        self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
+        self.textBrowser.setGeometry(QtCore.QRect(370, 240, 341, 192))
+        self.textBrowser.setObjectName("textBrowser")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
+        self.pushButton.clicked.connect(self.progressBar.reset)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -110,16 +99,16 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "数据清洗"))
         self.pushButton_2.setText(_translate("MainWindow", "手动抽奖"))
+        self.label.setText(_translate("MainWindow", "设置自动开奖时间"))
+        self.pushButton_3.setText(_translate("MainWindow", "自动开奖"))
+        self.label_2.setText(_translate("MainWindow", "输入有效月份\n"
+"如 11-2021"))
+        self.pushButton_4.setText(_translate("MainWindow", "取消自动开奖"))
+        self.dateTimeEdit.setDisplayFormat(_translate("MainWindow", "dd-MM-yyyy HH:mm"))
         self.textBrowser.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Adobe Devanagari\'; font-size:16pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:9pt;\">当前参与人次：</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:9pt;\">有效参与人次：</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:9pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:9pt;\">中奖单号：</span></p></body></html>"))
-        self.label.setText(_translate("MainWindow", "设置自动开奖时间"))
-        self.pushButton_3.setText(_translate("MainWindow", "自动开奖"))
-        self.label_2.setText(_translate("MainWindow", "输入有效月份"))
-        self.label_3.setText(_translate("MainWindow", "如 11-2021"))
-        self.pushButton_4.setText(_translate("MainWindow", "取消自动开奖"))
+"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">通过输入活动的有效月份信息，进行数据清洗，初步筛选无效数据。</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">可以通过选择时间进行自动开奖或手动抽奖</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:16pt;\"><br /></p></body></html>"))

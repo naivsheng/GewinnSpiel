@@ -7,30 +7,33 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import QDateTime
 from Ui_Gui import Ui_MainWindow
 from random_gen import Generate
 from GewinnSpiel import run
 
-class QMainWindow(QMainWindow,Ui_MainWindow):
-	def __init(self):
-		super(QMainWindow,self).__init__()
-		self.setupUi(self)
-		self.action(self)
-		# timeEdit = QDateTimeEdit(QTime.currentTime(), self)
-	def action(self):
-		self.pushButton.clicked.connect()
-		# 当时间改变时触发槽函数
-		# self.dateEdit.timeChanged.connect(self.onTimeChanged)
+class MyAction(Ui_MainWindow):
+	def __init__(self,mainWindow):
+		super().__init__()
+		self.setupUi(mainWindow)
+		self.initUI()
+	def initUI(self):
+		self.dateTimeEdit.setDateTime(QDateTime.currentDateTime())
 		self.pushButton_3.clicked.connect(self.confirm_to_run)
-		date=self.dateEdit.dateTime()
+		date=self.dateTimeEdit.dateTime()
 		self.pushButton_4.clicked.connect(self.cancel_to_run)
 		self.pushButton_2.clicked.connect(self.gene)
-		self.pushButton.clicked.connet(self.datecleaning)
+		self.pushButton.clicked.connect(self.datecleaning)
+
 	def onTimeChanged(date):
+		print(date.toString)
+	def confirm_to_run(self):
+		datetime = self.dateTimeEdit.dateTime()
+		date = []
+		for i in datetime.toString('dd-MM-yyyy-HH-mm').split('-'):
+			date.append(i) # 获取数据并切片
 		print(date)
-	def confirm_to_tun(self):
-		date = self.dateEdit.dateTime()
-		print(date)
+		# print(datetime.toString('dd-MM-yyyy HH:mm'))
 	def cancel_to_run(self):
 		print('cancel')
 	def btn_clicked(self):
@@ -39,13 +42,15 @@ class QMainWindow(QMainWindow,Ui_MainWindow):
 		num = Generate()
 		print('生成数字:',num)
 	def datecleaning(self):
-		run()
+		self.textBrowser.setText('开始数据清洗')
+		# 返回当前参与人次、有效参与人次
+		# run()
+		self.progressBar.setProperty("value", 100)
+
 
 if __name__ =='__main__':
 	app = QApplication(sys.argv)
-	MainWindow = QMainWindow()	
-	ui = Ui_MainWindow()
-	ui.setupUi(MainWindow)
-	MainWindow.show()
+	mainWindow = QMainWindow()
+	form = MyAction(mainWindow)
+	mainWindow.show()
 	sys.exit(app.exec_())	
-
