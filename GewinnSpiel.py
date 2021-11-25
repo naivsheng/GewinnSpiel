@@ -1,8 +1,9 @@
 '''
 # -*- coding: UTF-8 -*-
 # __Author__: Yingyu Wang
-# __date__: 17.11.2021
-# __Version__: 账单信息识别测试
+# __date__: 25.11.2021
+# __Version__: 文件读取更改为从数据库拉取数据
+# 账单信息识别测试
 预处理中的取消旋转判定
 由于Beleg.Nr不唯一：获取datum信息以定位信息
 对未能识别的图片顺时针旋转180°
@@ -97,10 +98,10 @@ def findresult(img):
             if findout_datum:
                 break
         result = ocr(imgBrightness(img,1.1 + (counter / 10) * 2,3))
-    
+    '''
     check_file = filepath + f.split('.')[0] + '.txt'
     with open(check_file, "a", encoding="utf-8") as f2:
-        f2.write(result) # 写入
+        f2.write(result) # 写入'''
     return findout_beleg,findout_datum
     
 def main_neu(img):
@@ -131,6 +132,9 @@ def main_neu(img):
     return findout_beleg,findout_datum
 
 def run():
+    '''
+        本地拉取
+    '''
     t = time.time()
     filepath = os.getcwd() + '\\pic\\'
     os.chdir(filepath)
@@ -149,6 +153,14 @@ def run():
                 print('does not find out a result')
             else:
                 print(findout_beleg,findout_datum)    
+    print('用时：',time.time()-t)
+
+def DataBase():
+    '''
+        数据库拉取
+    '''
+    t = time.time()
+
     print('用时：',time.time()-t)
 
 if __name__ == "__main__":
