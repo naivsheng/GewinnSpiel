@@ -1,5 +1,5 @@
 <?php
-$servername = "localhost";
+$servername = "localhost"; // localhost:3000 TODO端口号确认
 $username = "username";
 $password = "password";
  

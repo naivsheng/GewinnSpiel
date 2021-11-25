@@ -2,9 +2,9 @@
 # -*- coding: UTF-8 -*-
 # __Author__: Yingyu Wang
 # __date__: 
-# __Version__: 
+# __Version__: 创建MySQL连接
 '''
-import mysql.connector
+import mysql.connector  # pip install mysql-connector-python
 from mysql.connector import Error
 
 def create_connection(host_name, user_name, user_password):
