@@ -20,27 +20,19 @@ if (mysql_insert_id()) {//写入成功，发邮件
       $mail->CharSet ="UTF-8";                     //设定邮件编码
       $mail->SMTPDebug = 0;                        // 调试模式输出
       $mail->isSMTP();                             // 使用SMTP
-      $mail->Host = 'smtp.163.com';                // SMTP服务器
+      $mail->Host = '';                // SMTP服务器
       $mail->SMTPAuth = true;                      // 允许 SMTP 认证
-      $mail->Username = '18810254164@163.com';                // SMTP 用户名  即邮箱的用户名
-      $mail->Password = 'UXKUTRJXKERDYRIZ';             // SMTP 密码  部分邮箱是授权码(例如163邮箱)
+      $mail->Username = '';                // SMTP 用户名  即邮箱的用户名
+      $mail->Password = '';             // SMTP 密码  部分邮箱是授权码(例如163邮箱)
       $mail->SMTPSecure = 'ssl';                    // 允许 TLS 或者ssl协议
       $mail->Port = 465;                            // 服务器端口 25 或者465 具体要看邮箱服务器支持
   
-      $mail->setFrom("18810254164@163.com", 'Mailer');  //发件人
-      $mail->addAddress('naivsheng@outlook.com', 'Jue');  // 收件人
-      //$mail->addAddress('ellen@example.com');  // 可添加多个收件人
-      $mail->addReplyTo('18810254164@163.com', 'info'); //回复的时候回复给哪个邮箱 建议和发件人一致
-      //$mail->addCC('cc@example.com');                    //抄送
-      //$mail->addBCC('bcc@example.com');                    //密送
-  
-      //发送附件
-      // $mail->addAttachment('../xy.zip');         // 添加附件
-      // $mail->addAttachment('../thumb-1.jpg', 'new.jpg');    // 发送附件并且重命名
-  
+      $mail->setFrom("", 'Mailer');  //发件人
+      $mail->addAddress($email, '');  // 收件人
+      $mail->addReplyTo('', 're'); //回复的时候回复给哪个邮箱 建议和发件人一致
+      
       //Content
       $mail->isHTML(true);                                  // 是否以HTML文档格式发送  发送后客户端可直接显示对应HTML内容
-      $token = '12345';
       $mail->Subject = 'Title' . time();
       $mail->Body    = "Sehr geehrte Damen und Herren,<br>
       Sie haben schon ihre Document hochgeladen.<br>
