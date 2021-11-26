@@ -1,12 +1,11 @@
 # Automatically send email to verify the upload
 
 ## get email-adress from the form
+register.php
 ## send email with PHPMailer
-
-# get Daten from DataBase OCR and  analyse 
-
-## connect with DataBase
-
+register.php
+# get Daten from DataBase, OCR analyse and write data in DB
+connect.py
 ## OCR in Server or local
 Datum und Belegnummer
 
@@ -47,6 +46,7 @@ data_id -> Beleg in DataBase
 绑定邮箱信息;
 发送邮件“上传表单成功”：内嵌链接要求参与者点击以确保邮箱正确;
 点击邮箱调用代码确认激活信息
+从数据库拉取信息，识别后写入数据库
 
 ## 19.11.2021
 完善多线程逻辑 ->允许定时启动;
