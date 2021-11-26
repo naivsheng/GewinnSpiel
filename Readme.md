@@ -1,3 +1,20 @@
+# Automatically send email to verify the upload
+
+## get email-adress from the form
+## send email with PHPMailer
+
+# get Daten from DataBase OCR and  analyse 
+
+## connect with DataBase
+
+## OCR in Server or local
+Datum und Belegnummer
+Datum: Eliminate data that is not within the specified time limit
+Belegnummer: Data preprocessing -> delete repeat data 
+## delete repeat data
+with Belegnummer als result
+## finish program with a random function
+data_id -> Beleg in DataBase
 
 # 实现图片数据识别
 
