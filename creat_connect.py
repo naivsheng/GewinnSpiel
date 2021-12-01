@@ -83,7 +83,7 @@ def pic2sql():
             print(cursor.lastrowid, "记录插入成功。")
         else: print('记录插入失败')
     
-def run_connector():
+def result2DB():
     connection = create_connection("localhost", "root", "admin","db") # 创建链接
     if not connection:
         create_database_query = "CREATE DATABASE db" #创建database
@@ -105,6 +105,16 @@ def run_connector():
         database_query(connection, update_query)
         os.remove('image.png')
         connection.commit()
+
+def delete_repeat():
+    connection = create_connection("localhost", "root", "admin","db") # 创建链接
+    if not connection:
+        create_database_query = "CREATE DATABASE db" #创建database
+        database_query(connection, create_database_query)
+    cursor = connection.cursor()
+    cursor.execute('select * from tmp')
+    results = cursor.fetchall()
+    
 if __name__ == '__main__':
-    run_connector()
+    result2DB()
     

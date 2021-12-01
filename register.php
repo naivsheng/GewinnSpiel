@@ -1,9 +1,13 @@
 <?php
 $email = trim($_POST['email']); //邮箱
+$data = trim($_POST['data']);
 $regtime = time();
 $token = md5($username.$regtime); //创建用于激活识别码
-$sql = "insert into `t_user` (`email`,`token`) values ('$email','$token')";
-mysql_query($sql);
+$con=mysql_connect("127.0.0.1", "root", "admin","db")
+OR die('Could not connect to database.');
+echo "Connected!";
+$sql = "insert into `uploads` (`email`,`data`,`token`) values ('$email','$data','$token')";
+mysql_query($sql,$con);
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
