@@ -1,5 +1,4 @@
 <?php
-
 $email = trim($_POST['email']); //邮箱
 $regtime = time();
 $token = md5($username.$regtime); //创建用于激活识别码
@@ -35,19 +34,26 @@ if (mysql_insert_id()) {//写入成功，发邮件
       $mail->isHTML(true);                                  // 是否以HTML文档格式发送  发送后客户端可直接显示对应HTML内容
       $mail->Subject = 'Title' . time();
       $mail->Body    = "Sehr geehrte Damen und Herren,<br>
+      <br>
       Sie haben schon ihre Document hochgeladen.<br>
-       Klicken Sie auf den untenstehenden Link, um Ihre E-Mail zu bestätigen.<br><br>
-      http://localhost:3000/active.php?verify=" . $token . " <br><br>
+       Klicken Sie auf den untenstehenden Link, um Ihre E-Mail zu bestätigen.<br>
+       <br>
+      http://localhost:3000/active.php?verify=" . $token . " <br>
+      <br>
       Wenn der obige Link nicht angeklickt werden kann, kopieren Sie ihn bitte in die Adressleiste Ihres Browsers, um darauf zuzugreifen. <br>
      Falls diese Aktivierungsanfrage nicht von Ihnen gesendet wurde, ignorieren Sie diese E-Mail bitte. <br><br>
       Mit freundlichen Grüßen.<br>
-      GoAsia Supermarkt<br><br>
+      GoAsia Supermarkt<br>
+      <br>
       亲爱的顾客您好：<br>
     感谢您在我站上传了抽奖证明。<br>
-    请点击链接激活您的本次上传。<br><br>
-    http://localhost:3000/active.php?verify=" . $token . " <br><br>
+    请点击链接激活您的本次上传。<br>
+    <br>
+    http://localhost:3000/active.php?verify=" . $token . " <br>
+    <br>
     如果以上链接无法点击，请将它复制到你的浏览器地址栏中进入访问。<br>
-    如果此次激活请求非你本人所发，请忽略本邮件。<br><br>
+    如果此次激活请求非你本人所发，请忽略本邮件。<br>
+     <br>
     祝您生活愉快<br>
     德国东方超市";
       $mail->AltBody = '如果邮件客户端不支持HTML则显示此内容';
