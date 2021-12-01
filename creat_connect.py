@@ -89,7 +89,7 @@ def result2DB():
         create_database_query = "CREATE DATABASE db" #创建database
         database_query(connection, create_database_query)
     cursor = connection.cursor()
-    cursor.execute('select * from uploads')
+    cursor.execute('select * from uploads where datum_result is NULL')  # 跳过以处理过的数据
     results = cursor.fetchall()
     for row in results:
         id_ = row[0]
@@ -107,14 +107,27 @@ def result2DB():
         connection.commit()
 
 def delete_repeat():
+    '''
+        抽奖前进行去重，从tmp表中进行抽奖
+    '''
     connection = create_connection("localhost", "root", "admin","db") # 创建链接
-    if not connection:
-        create_database_query = "CREATE DATABASE db" #创建database
-        database_query(connection, create_database_query)
     cursor = connection.cursor()
-    cursor.execute('select * from tmp')
-    results = cursor.fetchall()
-    
+    query = "CREATE TABLE tmp SELECT * FROM uploads GROUP BY (nummer_result);"
+    database_query(connection,query)
+    query = "DELETE FROM tmp WHERE `nummer_result` ='-';"   # 去空
+    database_query(connection,query)
+    '''  # 替换原表
+        DROP TABLE person_tbl;
+        ALTER TABLE tmp RENAME TO person_tbl;
+    '''
+def reset_id():
+    connection = create_connection("localhost", "root", "admin","db") # 创建链接
+    cursor = connection.cursor()
+    query = "ALTER TABLE `tmp` DROP COLUMN `id`; "
+    database_query(connection,query)
+    query = "    ALTER TABLE `tmp` ADD `id` int(7) unsigned NOT NULL AUTO_INCREMENT FIRST,\
+            ADD PRIMARY KEY (`id`),AUTO_INCREMENT = 0 ROW_FORMAT = COMPACT;"
+    database_query(connection,query)
 if __name__ == '__main__':
-    result2DB()
-    
+    # result2DB()
+    delete_repeat()
