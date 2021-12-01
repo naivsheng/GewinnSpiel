@@ -7,6 +7,9 @@
 # import mysql.connector  # pip install mysql-connector
 from mysql.connector import Error,connect,cursor
 import os
+import GewinnSpiel as GS
+import numpy as np
+import cv2
 
 def create_connection(host_name, user_name, user_password,db):
     connection = None
@@ -49,14 +52,14 @@ def select_by_database(connection):
     # 预处理格式
     cmd.execute("select * from stu where id=%s and name=%s", (1, 'LiMing'))
 
-def run_connector():
+def pic2sql():
     connection = create_connection("localhost", "root", "admin","db") # 创建链接
     if not connection:
         create_database_query = "CREATE DATABASE db" #创建database
         database_query(connection, create_database_query)
     cursor = connection.cursor()
     create_table_query = "CREATE TABLE IF NOT EXISTS `uploads` (`id` INT AUTO_INCREMENT PRIMARY KEY,`email` VARCHAR(50),\
-        `summe` VARCHAR(10),`data` mediumblob null,`datum_result` VARCHAR(10),`nummer_result` VARCHAR(9),`verify_code` VARCHAR(100))"
+        `summe` VARCHAR(7),`data` mediumblob null,`datum_result` VARCHAR(10),`nummer_result` VARCHAR(10),`verify_code` VARCHAR(100))"
     database_query(connection,create_table_query)
     # sql = "DELETE FROM uploads WHERE email = 'example@123.com'"
     # cursor.execute(sql)
@@ -75,15 +78,33 @@ def run_connector():
         with open(files,'rb') as f:
             val = ("example@123.com", f.read())
         cursor.execute(sql,val)
-        # connection = create_connection("localhost", "root", "admin","db") # 创建链接
-        # cursor = connection.cursor()
         connection.commit() # 数据表内容有更新，必须使用到该语句
         if row != cursor.lastrowid:
             print(cursor.lastrowid, "记录插入成功。")
         else: print('记录插入失败')
-        input('check')
-        
-        
+    
+def run_connector():
+    connection = create_connection("localhost", "root", "admin","db") # 创建链接
+    if not connection:
+        create_database_query = "CREATE DATABASE db" #创建database
+        database_query(connection, create_database_query)
+    cursor = connection.cursor()
+    cursor.execute('select * from uploads')
+    results = cursor.fetchall()
+    for row in results:
+        id_ = row[0]
+        email = row[1]
+        img = row[3]
+        with open('image.png','wb') as f:
+            f.write(img)
+        img = cv2.imread('image.png',0)
+        findout_beleg,findout_datum = GS.DataBase(img)
+        update_query = f"UPDATE uploads SET nummer_result = '{findout_beleg}' WHERE `id` = {id_}"
+        database_query(connection, update_query)
+        update_query = f"UPDATE uploads SET datum_result = '{findout_datum}' WHERE `id` = {id_}"
+        database_query(connection, update_query)
+        os.remove('image.png')
+        connection.commit()
 if __name__ == '__main__':
     run_connector()
     

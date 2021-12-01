@@ -38,19 +38,21 @@ def contrast(img):
     '''
         均衡化: 增强对比度，提高识别准确率，但提升有限
     '''
-    ''' 彩色
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-        plane = []
-        planes = cv2.split(img) # 将图片分为三个单通道
-        for i in range(len(planes)):
-            plane.append(clahe.apply(planes[i]))
-        cl1 = cv2.merge(plane)
-        return cl1
+    '''
+    # 彩色
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    plane = []
+    planes = cv2.split(img) # 将图片分为三个单通道
+    for i in range(len(planes)):
+        plane.append(clahe.apply(planes[i]))
+    cl1 = cv2.merge(plane)
+    return cl1
     '''
     # 灰度图
     clahe = cv2.createCLAHE(clipLimit=2.0,tileGridSize=(8,8))
     cl1 = clahe.apply(img)
     return cl1
+    
 def ocr(image):
     '''
         识别
@@ -142,7 +144,8 @@ def run():
     for f in filelist:
         if ('.jpg' in f) or ('.bmp' in f) or ('.png' in f):
             print('actuelle file:',f)
-            img = cv2.imread(f,0)
+            img = cv2.imread(f,0) # 灰度
+            # img = cv2.imread(f)
             img = contrast(img)
             findout_beleg,findout_datum = main_neu(img)
             if not findout_datum and not findout_beleg:
@@ -155,13 +158,27 @@ def run():
                 print(findout_beleg,findout_datum)    
     print('用时：',time.time()-t)
 
-def DataBase():
+def DataBase(img):
     '''
         数据库拉取
     '''
-    t = time.time()
-
-    print('用时：',time.time()-t)
+    # t = time.time()
+    img = contrast(img)
+    findout_beleg,findout_datum = main_neu(img)
+    if not findout_datum and not findout_beleg:
+        print('rotate')
+        img = rotate(img)
+        findout_beleg,findout_datum = main_neu(img)
+    if not findout_datum and not findout_beleg:
+        print('does not find out a result')
+        return '-','-'
+    elif not findout_datum:
+        return findout_beleg,'-'
+    elif not findout_beleg:
+        return '-',findout_datum
+    else:
+        return findout_beleg,findout_datum 
+    # print('用时：',time.time()-t)
 
 if __name__ == "__main__":
     run()
