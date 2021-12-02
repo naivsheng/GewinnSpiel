@@ -61,11 +61,6 @@ def pic2sql():
     create_table_query = "CREATE TABLE IF NOT EXISTS `uploads` (`id` INT AUTO_INCREMENT PRIMARY KEY,`email` VARCHAR(50),\
         `summe` VARCHAR(7),`data` mediumblob null,`datum_result` VARCHAR(10),`nummer_result` VARCHAR(10),`verify_code` VARCHAR(100))"
     database_query(connection,create_table_query)
-    # sql = "DELETE FROM uploads WHERE email = 'example@123.com'"
-    # cursor.execute(sql)
-    # connection.commit()
-    # return True
-    # print(cursor.execute("SHOW TABLES"))
     sql = "INSERT INTO uploads (`email`, `data`) VALUES (%s, %s)"
     filepath = os.getcwd() + '\\pic\\'
     os.chdir(filepath)

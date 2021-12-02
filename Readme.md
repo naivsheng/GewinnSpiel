@@ -41,6 +41,13 @@ data_id -> Beleg in DataBase
 
 # log
 
+## 01.12.2021-02.12.2021
+php发送邮件
+php验证邮箱
+DataBase delete repeat
+DataBase reset id
+random and get data from DataBase
+
 ## 24.11.2021-26.11.2021
 设计数据库;
 绑定邮箱信息;
