@@ -22,15 +22,7 @@ try {
 
     $mail->setFrom("", 'Mailer');  //发件人
     $mail->addAddress('', 'Jue');  // 收件人
-    //$mail->addAddress('');  // 可添加多个收件人
     $mail->addReplyTo('', 'info'); //回复的时候回复给哪个邮箱 建议和发件人一致
-    //$mail->addCC('cc@example.com');                    //抄送
-    //$mail->addBCC('bcc@example.com');                    //密送
-
-    //发送附件
-    // $mail->addAttachment('../xy.zip');         // 添加附件
-    // $mail->addAttachment('../thumb-1.jpg', 'new.jpg');    // 发送附件并且重命名
-
     //Content
     $mail->isHTML(true);                                  // 是否以HTML文档格式发送  发送后客户端可直接显示对应HTML内容
     $token = '12345';
