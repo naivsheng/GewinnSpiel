@@ -10,6 +10,7 @@ import os
 import GewinnSpiel as GS
 import numpy as np
 import cv2
+import random
 
 def create_connection(host_name, user_name, user_password,db):
     connection = None
@@ -61,17 +62,21 @@ def pic2sql():
     create_table_query = "CREATE TABLE IF NOT EXISTS `uploads` (`id` INT AUTO_INCREMENT PRIMARY KEY,`email` VARCHAR(50),\
         `summe` VARCHAR(7),`data` mediumblob null,`datum_result` VARCHAR(10),`nummer_result` VARCHAR(10),`verify_code` VARCHAR(100))"
     database_query(connection,create_table_query)
-    sql = "INSERT INTO uploads (`email`, `data`) VALUES (%s, %s)"
+    sql = "INSERT INTO uploads (`email`, `data`,`verify_code`) VALUES (%s, %s, %s)"
     filepath = os.getcwd() + '\\pic\\'
     os.chdir(filepath)
     filelist = os.listdir(filepath)
+    liste = [chr(i) for i in range(65,91)] + [chr(i) for i in range(97,123)] + [str(i) for i in range(10)]
     
     # 将图片写入DB
     for files in filelist:
         print(files)
         row = cursor.lastrowid
+        num = random.sample(liste,20)
+        st = ''
+        code = st.join(num)
         with open(files,'rb') as f:
-            val = ("example@123.com", f.read())
+            val = ("example@123.com", f.read(),code)
         cursor.execute(sql,val)
         connection.commit() # 数据表内容有更新，必须使用到该语句
         if row != cursor.lastrowid:
@@ -126,3 +131,9 @@ def reset_id():
 if __name__ == '__main__':
     # result2DB()
     delete_repeat()
+    pass
+    liste = [chr(i) for i in range(65,91)] + [chr(i) for i in range(97,123)] + [str(i) for i in range(10)]
+    num = random.sample(liste,20)
+    st = ''
+    code = st.join(num)
+    print(code)
