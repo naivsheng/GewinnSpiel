@@ -166,18 +166,12 @@ def DataBase(img):
     img = contrast(img)
     findout_beleg,findout_datum = main_neu(img)
     if not findout_datum and not findout_beleg:
-        print('rotate')
+        # print('rotate')
         img = rotate(img)
         findout_beleg,findout_datum = main_neu(img)
-    if not findout_datum and not findout_beleg:
-        print('does not find out a result')
-        return '-','-'
-    elif not findout_datum:
-        return findout_beleg,'-'
-    elif not findout_beleg:
-        return '-',findout_datum
-    else:
-        return findout_beleg,findout_datum 
+    findout_beleg = '-' if not findout_beleg else findout_beleg
+    findout_datum = '-' if not findout_datum else findout_datum
+    return findout_beleg,findout_datum 
     # print('用时：',time.time()-t)
 
 if __name__ == "__main__":
