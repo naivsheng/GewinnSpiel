@@ -14,6 +14,8 @@
     提高亮度，提高对比度√
     # 图像匹配 文字区域检测 序列切分识别
     文字提取ocr
+
+TODO 上传员工卡，测试读取结果和运行时间
 '''
 
 from PIL import Image, ImageStat
@@ -132,6 +134,20 @@ def main_neu(img):
             break
         result = ocr(imgBrightness(img,1.1 + (counter / 10), 3))    
     return findout_beleg,findout_datum
+
+def karte(img):
+    result = ocr(img)
+    pattern = re.compile(r'\d+ .+')
+    # pattern_out = re.compile(r'\d+ [A-Za-z]+ [A-Za-z]+\Z')
+    for counter in range(5):
+        findout = pattern.findall(result) if not findout else findout
+        for i in findout:
+            idnr = i.split(' ')[0] if i.split(' ')[0] != '10713' else ''
+            name = i.replace(idnr,'') if i.replace(idnr,'') != 'Berlin' else ''
+        if idnr and name:
+            break
+        result = ocr(imgBrightness(img,1.1 + (counter / 10), 3))    
+    return idnr, name
 
 def run():
     '''
