@@ -21,20 +21,6 @@ t=time.time()
 
 s3_resource = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=AWS_DEFAULT_REGION)
 gewinn_spiel = s3_resource.Bucket(name = AWS_BUCKET)
-''' # upload to s3
-    filepath = os.getcwd() + '\\'
-    filepath = filepath + 'pic\\'
-    os.chdir(filepath)
-    filelist = os.listdir(filepath)
-    for f in filelist:
-        img = cv2.imread(f,0)
-        print(DataBase(img))
-        # upload
-        # print(f,'uploading')
-        # s3_resource.Object(AWS_BUCKET, f).upload_file(Filename=f)
-    print(time.time()-t)
-    input('check')
-'''
 # download
 # 连接db，获取仍未进行识别的记录，存储为字典 id:pic
 # 遍历s3中的图片，若在dic中则下载识别，传回单据信息
@@ -50,6 +36,8 @@ for object in gewinn_spiel.objects.all():
         s3_resource.Object(AWS_BUCKET, object.key).download_file(f) # download tmp file
         img = cv2.imread(f,0)
         result[dict_new[object.key.split('/')[1]]] = DataBase(img)
+        with open('result.txt','a+') as result_file: # 数据备份到文件，防止server崩溃
+            result_file.write(dict_new[object.key.split('/')[1]],result[dict_new[object.key.split('/')[1]]] )
 LavaralUpload(result)
 
 print(time.time()-t)
