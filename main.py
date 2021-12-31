@@ -14,6 +14,7 @@ from GewinnSpiel import run
 # from threading import Timer,Thread
 import time
 from Multi import Runthread
+from LavaralConnect import LavaralConnect
 
 
 class MyAction(Ui_MainWindow):
@@ -76,7 +77,7 @@ class MyAction(Ui_MainWindow):
 			生成随机数，获取中奖号码、预留邮箱信息
 		'''
 		num = Generate()
-		print('生成数字:',num)
+		# print('生成数字:',num)
 		self.pushButton_4.setEnabled(False)
 		self.pushButton_2.setEnabled(True)
 		self.pushButton_3.setEnabled(True)
@@ -84,6 +85,26 @@ class MyAction(Ui_MainWindow):
 		s = '\n' + '生成数字：' + str(num)
 		self.textBrowser.setText(s)	
 		# 找到num指向的单据
+		data_dict = LavaralConnect(num)
+		dict_new = dict(zip(data_dict.values(),data_dict.keys()))   # 图片名：id
+		# 连接		
+		AWS_ACCESS_KEY_ID = ''
+		AWS_SECRET_ACCESS_KEY = ''
+		AWS_BUCKET = 'gewinn-spiel'
+		AWS_DEFAULT_REGION = 'eu-central-1'
+		AWS_USE_PATH_STYLE_ENDPOINT = False
+
+		s3_resource = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=AWS_DEFAULT_REGION)
+		gewinn_spiel = s3_resource.Bucket(name = AWS_BUCKET)
+
+		for object in gewinn_spiel.objects.all():
+			if 'images/' not in object.key.split('.')[0]:
+				continue
+			if object.key.split('/')[1] in dict_new:
+				f = 'Gewinn_result.' + object.key.split('.')[1]
+        s3_resource.Object(AWS_BUCKET, object.key).download_file(f) # download tmp file
+		self.textBrowser.setText(f'中奖信息id为：{num}\n具体信息为：{data_dict}\n单据文件为Gewinn_result\n')
+
 	def datecleaning(self):
 		'''
 			数据清洗

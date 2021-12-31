@@ -1,20 +1,14 @@
 '''
 # -*- coding: UTF-8 -*-
 # __Author__: Yingyu Wang
-# __date__: 
-# __Version__: 
-'''
-'''
-# -*- coding: UTF-8 -*-
-# __Author__: Yingyu Wang
-# __date__: 16.12.2021
-# __Version__: 连接lavaral forge
+# __date__: 31.12.2021
+# __Version__: connect to lavaral folge
 '''
 from mysql.connector import connect,cursor
 from sshtunnel import SSHTunnelForwarder
 import time
 
-def LavaralConnect():
+def LavaralConnect(arg=None):
     with open('id_rsa') as f:
         private_key = f.read()
 
@@ -29,13 +23,19 @@ def LavaralConnect():
             passwd = '',
             db='gewinn_spiel')
         cursor = conn.cursor()
-        cursor.execute('select `id`,`receipt` from raffles where `is_email_verified`=1 and receipt_beleg is null')
-        
-        # desc = cursor.description  # 获取字段的描述，默认获取数据库字段名称，重新定义时通过AS关键重新命名即可
-        # data_dict = [dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()]  # 列表表达式把数据组装起来
-        data_dict = [row for row in cursor.fetchall()]
-        data_dict = dict(data_dict)
-        return data_dict
+        if not arg:
+            cursor.execute('select `id`,`receipt` from raffles where `is_email_verified`=1 and receipt_beleg is null')
+            # desc = cursor.description  # 获取字段的描述，默认获取数据库字段名称，重新定义时通过AS关键重新命名即可
+            # data_dict = [dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()]  # 列表表达式把数据组装起来
+            data_dict = [row for row in cursor.fetchall()]
+            data_dict = dict(data_dict)
+            return data_dict
+        else:
+            # 找到中奖id，传回信息
+            cursor.execute(f'select * from raffles where `id`={arg}')
+            data_dict = [row for row in cursor.fetchall()]
+            data_dict = dict(data_dict)
+            return data_dict
 
 def LavaralUpload(result):
     with open('id_rsa') as f:
